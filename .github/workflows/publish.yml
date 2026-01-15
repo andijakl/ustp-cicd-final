@@ -4,17 +4,14 @@ on:
   workflow_dispatch:
     inputs:
       target_sha:
-        description: "Commit SHA to deploy (defaults to this workflow's SHA)"
+        description: "Commit SHA to deploy (leave empty = use this workflow's SHA)"
         required: false
-        default: ${{ github.sha }}
+        default: "" # must be a literal, not an expression [1](https://github.com/orgs/community/discussions/25218)
       build_workflow:
         description: "Build workflow file (path in .github/workflows)"
         required: false
         default: build.yml
 
-# Required permissions:
-# - contents:read and actions:read to locate runs/artifacts
-# - pages:write and id-token:write to deploy to Pages
 permissions:
   contents: read
   actions: read
@@ -34,8 +31,13 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
-            const wfFile = core.getInput('build_workflow') || 'build.yml';
-            const sha = core.getInput('target_sha') || context.sha;
+            const wfFile =
+              (context.payload.inputs && context.payload.inputs.build_workflow) ||
+              'build.yml';
+
+            const sha =
+              (context.payload.inputs && context.payload.inputs.target_sha) ||
+              context.sha;
 
             // Get workflow by file name
             const { data: workflow } = await github.rest.actions.getWorkflow({
@@ -65,13 +67,11 @@ jobs:
       - name: Download build artifact (vite-build-<sha>) from Build workflow
         uses: actions/download-artifact@v4
         with:
-          # Must match the artifact name produced by your Build workflow
           name: vite-build-${{ steps.resolve.outputs.sha }}
           run-id: ${{ steps.resolve.outputs.run_id }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           path: dist
 
-      # Package for GitHub Pages (creates the required 'github-pages' artifact)
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
