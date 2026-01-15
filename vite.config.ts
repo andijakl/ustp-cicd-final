@@ -9,17 +9,36 @@ import { resolve } from 'path'
 const projectRoot = process.env.PROJECT_ROOT || import.meta.dirname
 
 // https://vite.dev/config/
-export default defineConfig({
-  plugins: [
-    react(),
-    tailwindcss(),
-    // DO NOT REMOVE
-    createIconImportProxy() as PluginOption,
-    sparkPlugin() as PluginOption,
-  ],
+export default defineConfig(({ mode }) => ({
+  plugins: mode === 'test' 
+    ? [react()] 
+    : [
+        react(),
+        tailwindcss(),
+        // DO NOT REMOVE
+        createIconImportProxy() as PluginOption,
+        sparkPlugin() as PluginOption,
+      ],
   resolve: {
     alias: {
       '@': resolve(projectRoot, 'src')
     }
   },
-});
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: './src/test/setup.ts',
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html', 'lcov'],
+      exclude: [
+        'node_modules/',
+        'src/test/',
+        '**/*.d.ts',
+        '**/*.config.*',
+        '**/mockData',
+        'src/main.tsx',
+      ],
+    },
+  },
+}));
