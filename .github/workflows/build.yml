@@ -35,10 +35,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results-${{ matrix.os }}
-          path: |
-            coverage/
-            if-no-files-found: ignore
-            retention-days: 14
+          path: coverage/
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Build
         if: matrix.os == 'ubuntu-latest'
