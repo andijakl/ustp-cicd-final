@@ -1,0 +1,63 @@
+name: Publish Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write # required to create a release and upload assets
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate tag format (vX.X.X)
+        shell: bash
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [[ ! "$TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Tag '$TAG' does not match vX.X.X. Exiting."
+            exit 1
+          fi
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Package build artifacts (dist)
+        shell: bash
+        run: |
+          test -d dist
+          zip -r "vite-dist-${GITHUB_REF_NAME}.zip" dist
+
+      # Optional: keep the artifact in the workflow run as well
+      - name: Upload workflow artifact (optional)
+        uses: actions/upload-artifact@v4
+        with:
+          name: vite-dist-${{ github.ref_name }}
+          path: vite-dist-${{ github.ref_name }}.zip
+          retention-days: 14
+
+      - name: Create GitHub Release and upload assets
+        uses: softprops/action-gh-release@v2
+        with:
+          name: USTP CI/CD Tetris ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
+          generate_release_notes: true
+          files: |
+            vite-dist-${{ github.ref_name }}.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
