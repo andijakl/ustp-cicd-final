@@ -228,7 +228,7 @@ describe('tetris utility functions', () => {
         board[BOARD_HEIGHT - 1][x] = { filled: true, color: 'red' };
       }
 
-      const { newBoard, linesCleared } = clearLines(board);
+      const { linesCleared } = clearLines(board);
       expect(linesCleared).toBe(0);
     });
 
