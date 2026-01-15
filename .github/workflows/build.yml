@@ -10,7 +10,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -24,14 +27,27 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-${{ matrix.os }}
+          path: coverage/
+          if-no-files-found: ignore
+          retention-days: 14
+
       - name: Build
+        if: matrix.os == 'ubuntu-latest'
         run: npm run build
 
-      # Upload production-ready Vite build (dist/)
+      # Upload the production-ready Vite build only from Linux
       - name: Upload build artifact
+        if: matrix.os == 'ubuntu-latest'
         uses: actions/upload-artifact@v4
         with:
           name: vite-build-${{ github.sha }}
           path: dist/**
           if-no-files-found: error
-          retention-days: 14
