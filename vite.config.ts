@@ -8,8 +8,16 @@ import { resolve } from 'path'
 
 const projectRoot = process.env.PROJECT_ROOT || import.meta.dirname
 
+// GitHub Pages project site base path (repo name)
+const ghPagesBase = "/ustp-cicd-final/"; // <-- adjust if repo name differs
+
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => ({
+
+  // IMPORTANT for GitHub Pages project sites:
+  // Vite must use '/<REPO>/' as base so assets resolve correctly. 
+  base: mode === "production" ? ghPagesBase : "/",
+
   plugins: mode === 'test' 
     ? [react()] 
     : [
