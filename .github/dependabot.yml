@@ -1,0 +1,41 @@
+# .github/dependabot.yml
+version: 2
+updates:
+  # Repeat this block per package ecosystem you use (npm, pip, maven, gradle, gomod, cargo, github-actions, etc.)
+  - package-ecosystem: "npm" # or "pip", "maven", "gradle", "gomod", "cargo", "github-actions", etc.
+    directory: "/" # path to the package manifest(s)
+    schedule:
+      interval: "weekly" # daily | weekly | monthly
+      day: "monday" # monday..sunday (optional; defaults vary)
+      time: "09:00" # 24h UTC time (optional)
+      timezone: "Europe/Vienna" # so it runs 06:00 local time (optional)
+    # Combine all dependency updates into a single PR
+    groups:
+      all-deps:
+        patterns:
+          - "*" # include all dependencies
+    # Optional quality-of-life settings
+    open-pull-requests-limit: 1 # enforce one PR at a time
+    target-branch: "main" # adjust if your default branch differs
+    rebase-strategy: "auto" # or "disabled"
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+      - "automated"
+
+  - package-ecosystem: "github-actions"
+    directory: "/" # Dependabot will scan .github/workflows for Actions
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "Europe/Vienna"
+    open-pull-requests-limit: 1
+    target-branch: "main"
+    rebase-strategy: "auto"
+    commit-message:
+      prefix: "deps"
+    labels:
+      - "dependencies"
+      - "automated"
