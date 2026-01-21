@@ -45,7 +45,7 @@ jobs:
 
       # Optional: keep the artifact in the workflow run as well
       - name: Upload workflow artifact (optional)
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: vite-dist-${{ github.ref_name }}
           path: vite-dist-${{ github.ref_name }}.zip
