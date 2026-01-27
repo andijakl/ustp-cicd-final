@@ -15,9 +15,9 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "18"
 
       - name: Run cspell on Markdown files
-        uses: streetsidesoftware/cspell-action@v2
+        uses: streetsidesoftware/cspell-action@v8
         with:
-          args: '**/*.md'
+          files: "**/*.md"
