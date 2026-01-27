@@ -20,4 +20,6 @@ jobs:
       - name: Run cspell on Markdown files
         uses: streetsidesoftware/cspell-action@v8
         with:
+          incremental_files_only: false
           files: "**/*.md"
+          inline: error
