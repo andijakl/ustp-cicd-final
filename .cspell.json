@@ -1,0 +1,15 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "vscode",
+    "ustp",
+    "opensource",
+    "Tetris"
+  ],
+  "ignorePaths": [
+    "node_modules",
+    "dist",
+    "build"
+  ]
+}
