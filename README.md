@@ -1,5 +1,7 @@
 # USTP CI/CD Final (Tetris)
 
+[![codecov](https://codecov.io/gh/andijakl/ustp-cicd-final/branch/main/graph/badge.svg)](https://codecov.io/gh/andijakl/ustp-cicd-final)
+
 Demo deployed to GitHub Pages: https://andijakl.github.io/ustp-cicd-final/
 
 ## CI status
