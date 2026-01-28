@@ -31,7 +31,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Upload coverage to Codecov (PR)
-        if: github.event_name == 'pull_request'
+        if: matrix.os == 'ubuntu-latest' && github.event_name == 'pull_request'
         uses: codecov/codecov-action@v5.5.2
         with:
           # Optional: set token in repository secrets if using private repos
@@ -39,13 +39,13 @@ jobs:
           # Path to lcov produced by test:coverage
           files: coverage/lcov.info
           # Record PR uploads against the PR base branch (e.g. `main`)
-          branch: ${{ github.event.pull_request.base.ref }}
-          pr: ${{ github.event.pull_request.number }}
+          override_branch: ${{ github.event.pull_request.base.ref }}
+          override_pr: ${{ github.event.pull_request.number }}
           # Keep PR uploads best-effort (don't fail the job if upload fails)
           fail_ci_if_error: false
 
       - name: Upload coverage to Codecov (push)
-        if: github.event_name == 'push'
+        if: matrix.os == 'ubuntu-latest' && github.event_name == 'push'
         uses: codecov/codecov-action@v5.5.2
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
