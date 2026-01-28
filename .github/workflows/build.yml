@@ -30,7 +30,7 @@ jobs:
       - name: Run tests with coverage
         run: npm run test:coverage
 
-      - name: Upload coverage to Codecov
+      - name: Upload coverage to Codecov (PR)
         if: github.event_name == 'pull_request'
         uses: codecov/codecov-action@v5.5.2
         with:
@@ -38,8 +38,20 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           # Path to lcov produced by test:coverage
           files: coverage/lcov.info
-          # Only fail the CI on push to main; keep upload best-effort for PRs/forks
-          fail_ci_if_error: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+          # Record PR uploads against the PR base branch (e.g. `main`)
+          branch: ${{ github.event.pull_request.base.ref }}
+          pr: ${{ github.event.pull_request.number }}
+          # Keep PR uploads best-effort (don't fail the job if upload fails)
+          fail_ci_if_error: false
+
+      - name: Upload coverage to Codecov (push)
+        if: github.event_name == 'push'
+        uses: codecov/codecov-action@v5.5.2
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/lcov.info
+          # Fail CI only on push to main
+          fail_ci_if_error: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Upload test results
         if: always()
